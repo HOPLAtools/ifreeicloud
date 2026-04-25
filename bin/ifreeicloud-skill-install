@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+import { existsSync, mkdirSync, copyFileSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const sourceDir = join(__dirname, '..', 'skills', 'ifreeicloud');
+const files = ['SKILL.md', 'reference.md'];
+
+const args = process.argv.slice(2);
+const isGlobal = args.includes('--global') || args.includes('-g');
+
+const targetDir = isGlobal
+  ? join(process.env.HOME ?? '~', '.claude', 'skills', 'ifreeicloud')
+  : join(process.cwd(), '.claude', 'skills', 'ifreeicloud');
+
+for (const file of files) {
+  if (!existsSync(join(sourceDir, file))) {
+    console.error(`Source file not found: ${join(sourceDir, file)}`);
+    process.exit(1);
+  }
+}
+
+mkdirSync(targetDir, { recursive: true });
+
+for (const file of files) {
+  copyFileSync(join(sourceDir, file), join(targetDir, file));
+}
+
+const scope = isGlobal ? 'globally' : `in ${targetDir}`;
+console.log(`@hopla/ifreeicloud skill installed ${scope}`);
+console.log('Claude Code will now know how to use @hopla/ifreeicloud when building projects.');

@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+import { existsSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+
+const args = process.argv.slice(2);
+const isGlobal = args.includes('--global') || args.includes('-g');
+
+const targetDir = isGlobal
+  ? join(process.env.HOME ?? '~', '.claude', 'skills', 'ifreeicloud')
+  : join(process.cwd(), '.claude', 'skills', 'ifreeicloud');
+
+if (!existsSync(targetDir)) {
+  console.log('Skill not found — nothing to remove.');
+  process.exit(0);
+}
+
+rmSync(targetDir, { recursive: true });
+
+const scope = isGlobal ? 'globally' : `from ${targetDir}`;
+console.log(`@hopla/ifreeicloud skill uninstalled ${scope}`);
