@@ -1,0 +1,363 @@
+{
+  "info": {
+    "_postman_id": "8a2b4c10-5f6e-4d3a-9b21-ifreeicloud0001",
+    "name": "iFreeiCloud API",
+    "description": "Manual exploration of the iFreeiCloud API (https://api.ifreeicloud.co.uk).\n\nAll requests are POST against a single host. The body discriminates the operation:\n- `service=<id>` → run an instant service\n- `accountinfo=servicelist` → list services\n- `accountinfo=balance` → account balance\n\nSet the collection variables (or import the matching environment file) before sending:\n- `baseUrl` — defaults to `https://api.ifreeicloud.co.uk`\n- `apiKey`  — your iFreeiCloud API key (XXX-XXX-XXX-XXX-XXX-XXX-XXX-XXX)\n- `imei`    — IMEI/serial to test against\n\nFor SDK usage see https://www.npmjs.com/package/@hopla/ifreeicloud.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://api.ifreeicloud.co.uk", "type": "string" },
+    { "key": "apiKey", "value": "YOUR_API_KEY_HERE", "type": "string" },
+    { "key": "imei", "value": "354442067957123", "type": "string" }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Collection-wide post-response checks",
+          "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+          "const data = pm.response.json();",
+          "pm.test('envelope shape', () => {",
+          "  pm.expect(data).to.have.property('success');",
+          "});",
+          "if (data.success !== true) {",
+          "  console.warn('iFreeiCloud error:', data.error);",
+          "}"
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Account",
+      "item": [
+        {
+          "name": "Balance",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "accountinfo", "value": "balance", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "Returns the account balance in `object.account_balance` (USD)."
+          }
+        },
+        {
+          "name": "Service List",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "accountinfo", "value": "servicelist", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "Returns the live catalog of instant services. `response` is HTML, `object` is keyed by service ID with name/price/time/description/snSupport/objectSupport."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Free / Cheap",
+      "item": [
+        {
+          "name": "0 - FREE Universal Model Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "0", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "FREE — universal model lookup (returns model + brand). Useful first call to confirm the IMEI/serial is recognized."
+          }
+        },
+        {
+          "name": "275 - Apple IMEI/Serial Validator",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "275", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.005 — cheapest paid call. Use to gate expensive checks when the input source is untrusted."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Apple",
+      "item": [
+        {
+          "name": "4 - FMI On/Off Status",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "4", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.01 — Find My iPhone activation lock status."
+          }
+        },
+        {
+          "name": "60 - iCloud Clean/Lost Status (Cellular)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "60", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.03 — iCloud blacklist status (cellular models)."
+          }
+        },
+        {
+          "name": "131 - Activation Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "131", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.02 — activation status (locked vs activated)."
+          }
+        },
+        {
+          "name": "247 - MacBook FMI On/Off Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "247", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.20 — MacBook FMI activation lock (use serial number, not IMEI)."
+          }
+        },
+        {
+          "name": "206 - Full GSX Report",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "206", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$2.80 — full Apple GSX report. Expensive — use intentionally."
+          }
+        }
+      ]
+    },
+    {
+      "name": "US Carriers",
+      "item": [
+        {
+          "name": "272 - AT&T Status Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "272", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.05 — AT&T device + finance status. Response includes `att/deviceStatus` and `att/financeStatus` in a single call."
+          }
+        },
+        {
+          "name": "273 - T-Mobile Pro Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "273", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.05 — T-Mobile device + finance status."
+          }
+        },
+        {
+          "name": "284 - Verizon Finance Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "284", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.04 — Verizon device + finance status. Watch for `PAST DUE` on financeStatus."
+          }
+        },
+        {
+          "name": "251 - TracFone / StraightTalk Status",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "251", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.10 — TracFone / StraightTalk status."
+          }
+        },
+        {
+          "name": "211 - USA Blacklist/Barred Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "211", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.06 — USA blacklist / barred device check."
+          }
+        },
+        {
+          "name": "287 - USA ESN Status",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "287", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.10 — generic USA ESN status (not carrier-specific)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "JP Carriers",
+      "item": [
+        {
+          "name": "195 - JP NTT Docomo Status Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "195", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.03 — Japan NTT Docomo carrier status."
+          }
+        },
+        {
+          "name": "236 - JP SoftBank Finance Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "236", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.03 — Japan SoftBank finance status."
+          }
+        },
+        {
+          "name": "237 - JP KDDI Finance Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "service", "value": "237", "type": "text" },
+                { "key": "imei", "value": "{{imei}}", "type": "text" },
+                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
+            "description": "$0.03 — Japan KDDI finance status."
+          }
+        }
+      ]
+    }
+  ]
+}

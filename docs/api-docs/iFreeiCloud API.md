@@ -180,7 +180,14 @@ code in `src/errors.ts`.
 
 ---
 
-## 8. Best practices
+## 8. Postman collection
+
+A pre-built Postman collection lives at [`docs/postman/`](../postman/). Import the
+`*.postman_collection.json` and `*.postman_environment.json` into Postman, set your `apiKey` in the
+environment, and you have ~17 ready-to-send requests covering account, Apple, US carriers, and JP
+carriers. See [`docs/postman/README.md`](../postman/README.md) for setup details.
+
+## 9. Best practices
 
 1. **Retries**: when the underlying `fetch` rejects (`AbortError`, network) or HTTP is non-2xx,
    retry with exponential backoff. The default per-request timeout is 60 s.

@@ -221,6 +221,7 @@ Full reference is in [`docs/`](./docs):
 
 - [`docs/api-docs/iFreeiCloud API.md`](./docs/api-docs/iFreeiCloud%20API.md) — endpoint, auth, envelope, examples
 - [`docs/iFreeiCloud Service Reference.md`](./docs/iFreeiCloud%20Service%20Reference.md) — all 72 services, prices, categories
+- [`docs/postman/`](./docs/postman) — Postman collection + environment for manual API exploration
 
 ## License
 
