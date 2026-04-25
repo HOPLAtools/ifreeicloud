@@ -50,6 +50,7 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "smoke": "tsx scripts/smoke.ts",
+    "postman:generate": "tsx scripts/generate-postman.ts",
     "prepublishOnly": "npm run typecheck && npm run test && npm run build",
     "publish:public": "npm publish --access public"
   },

@@ -2,8 +2,20 @@
 
 Two files in this folder:
 
-- `iFreeiCloud.postman_collection.json` — 17 pre-built requests against the live API
+- `iFreeiCloud.postman_collection.json` — 74 pre-built requests against the live API (2 account + all 72 services), organized in 9 folders by service category. **Generated** from `src/services.ts` — do not edit by hand.
 - `iFreeiCloud.postman_environment.json` — environment template with `baseUrl`, `apiKey`, `imei`
+
+To regenerate the collection after editing the catalog:
+
+```bash
+npm run postman:generate
+```
+
+## HOPLA convention
+
+Drop these files into the **HOPLA Tools** team workspace in Postman so all `@hopla/*` collections
+live in one place. This is the same convention used by `@hopla/sickw` and any future `@hopla/*`
+SDK package.
 
 ## Import
 
@@ -28,11 +40,15 @@ Drop the JSON files into Postman from there.
 
 | Folder | Requests | Notes |
 |--------|----------|-------|
-| Account | Balance, Service List | Free metadata calls |
-| Free / Cheap | Service 0 (FREE), 275 ($0.005) | Safe to spam while exploring |
-| Apple | 4, 60, 131, 247, 206 | Free 2.80 GSX is the most expensive — careful |
-| US Carriers | 272, 273, 284, 251, 211, 287 | Each carrier-specific call returns ESN + finance |
-| JP Carriers | 195, 236, 237 | NTT Docomo, SoftBank, KDDI |
+| Account | 2 | Balance + Service List (free metadata calls) |
+| Apple | 16 | FMI, iCloud, GSX, MacBook FMI/iCloud, Validator, etc. |
+| US Carriers | 8 | AT&T, T-Mobile, Verizon, TracFone, Blacklist, ESN |
+| JP Carriers | 3 | NTT Docomo, SoftBank, KDDI |
+| Brand Info | 15 | Samsung, Huawei, Pixel, OnePlus, OPPO, Xiaomi, Honor, … |
+| All-in-one | 4 | Basic, Mini, Pro, Ultimate |
+| Generic | 16 | Universal Model, Carrier+SIM-Lock, Warranty, Convert, … |
+| Laptop | 5 | Dell, HP, Lenovo, MacBook Specs |
+| Dev/Testing | 5 | Dev-Exclusive samples and TESTING-* fraud/model/serial |
 
 Every request has a built-in test that asserts HTTP 200 + envelope shape (`success` field present), and logs the API's `error` string to the Postman console when `success: false`.
 
@@ -50,5 +66,5 @@ The collection uses three variables, resolved against the active environment:
 
 - All requests are POST `application/x-www-form-urlencoded`. The body params discriminate the operation (`service` for checks, `accountinfo` for balance/services).
 - `name` fields in the Service List response include HTML entities (e.g. `&#128274;` for 🔒). Decode at render-time if you display them.
-- The catalog has 73+ services live — this collection only includes ~17 representative IDs. For the full list, run **Account → Service List** or see `docs/iFreeiCloud Service Reference.md`.
+- The collection includes all 72 services from the local catalog (`src/services.ts`). The live API may have more — call **Account → Service List** to refresh, then update `src/services.ts` and run `npm run postman:generate`.
 - For programmatic usage, prefer the SDK: `npm install @hopla/ifreeicloud`. The Postman collection is for manual exploration / debugging.

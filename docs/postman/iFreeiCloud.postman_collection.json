@@ -1,14 +1,25 @@
 {
   "info": {
-    "_postman_id": "8a2b4c10-5f6e-4d3a-9b21-ifreeicloud0001",
     "name": "iFreeiCloud API",
-    "description": "Manual exploration of the iFreeiCloud API (https://api.ifreeicloud.co.uk).\n\nAll requests are POST against a single host. The body discriminates the operation:\n- `service=<id>` → run an instant service\n- `accountinfo=servicelist` → list services\n- `accountinfo=balance` → account balance\n\nSet the collection variables (or import the matching environment file) before sending:\n- `baseUrl` — defaults to `https://api.ifreeicloud.co.uk`\n- `apiKey`  — your iFreeiCloud API key (XXX-XXX-XXX-XXX-XXX-XXX-XXX-XXX)\n- `imei`    — IMEI/serial to test against\n\nFor SDK usage see https://www.npmjs.com/package/@hopla/ifreeicloud.",
+    "description": "Manual exploration of the iFreeiCloud API (https://api.ifreeicloud.co.uk).\n\nAll requests are POST against a single host. The body discriminates the operation:\n- `service=<id>` → run an instant service\n- `accountinfo=servicelist` → list services\n- `accountinfo=balance` → account balance\n\nSet the collection variables before sending: `baseUrl`, `apiKey`, `imei`. \nA matching environment file is included at `docs/postman/iFreeiCloud.postman_environment.json`.\n\nGenerated from `src/services.ts` — 72 services across 8 categories.\nDo not edit by hand. Run `npm run postman:generate` after updating the catalog.\n\nSDK: https://www.npmjs.com/package/@hopla/ifreeicloud",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "https://api.ifreeicloud.co.uk", "type": "string" },
-    { "key": "apiKey", "value": "YOUR_API_KEY_HERE", "type": "string" },
-    { "key": "imei", "value": "354442067957123", "type": "string" }
+    {
+      "key": "baseUrl",
+      "value": "https://api.ifreeicloud.co.uk",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "YOUR_API_KEY_HERE",
+      "type": "string"
+    },
+    {
+      "key": "imei",
+      "value": "354442067957123",
+      "type": "string"
+    }
   ],
   "event": [
     {
@@ -16,15 +27,10 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// Collection-wide post-response checks",
           "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
           "const data = pm.response.json();",
-          "pm.test('envelope shape', () => {",
-          "  pm.expect(data).to.have.property('success');",
-          "});",
-          "if (data.success !== true) {",
-          "  console.warn('iFreeiCloud error:', data.error);",
-          "}"
+          "pm.test('envelope shape', () => { pm.expect(data).to.have.property('success'); });",
+          "if (data.success !== true) { console.warn('iFreeiCloud error:', data.error); }"
         ]
       }
     }
@@ -41,12 +47,18 @@
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "accountinfo", "value": "balance", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "accountinfo",
+                  "value": "balance"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "Returns the account balance in `object.account_balance` (USD)."
+            "url": "{{baseUrl}}",
+            "description": "Returns the account balance in `object.account_balance` (USD). Free metadata call."
           }
         },
         {
@@ -57,51 +69,18 @@
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "accountinfo", "value": "servicelist", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "accountinfo",
+                  "value": "servicelist"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "Returns the live catalog of instant services. `response` is HTML, `object` is keyed by service ID with name/price/time/description/snSupport/objectSupport."
-          }
-        }
-      ]
-    },
-    {
-      "name": "Free / Cheap",
-      "item": [
-        {
-          "name": "0 - FREE Universal Model Check",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                { "key": "service", "value": "0", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
-              ]
-            },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "FREE — universal model lookup (returns model + brand). Useful first call to confirm the IMEI/serial is recognized."
-          }
-        },
-        {
-          "name": "275 - Apple IMEI/Serial Validator",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                { "key": "service", "value": "275", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
-              ]
-            },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.005 — cheapest paid call. Use to gate expensive checks when the input source is untrusted."
+            "url": "{{baseUrl}}",
+            "description": "Returns the live catalog of instant services. `response` is HTML, `object` is keyed by service ID with name/price/time/description/snSupport/objectSupport. Free metadata call."
           }
         }
       ]
@@ -117,13 +96,48 @@
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "4", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "4"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.01 — Find My iPhone activation lock status."
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.01 • flags: apple, fmi-locked\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "46 - Replaced Status (Original Device)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "46"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.02 • flags: apple\n\nReturns structured `object`."
           }
         },
         {
@@ -134,13 +148,22 @@
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "60", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "60"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.03 — iCloud blacklist status (cellular models)."
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.03 • flags: apple, blacklist\n\nReturns structured `object`."
           }
         },
         {
@@ -151,30 +174,126 @@
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "131", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "131"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.02 — activation status (locked vs activated)."
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.02 • flags: apple\n\nReturns structured `object`."
           }
         },
         {
-          "name": "247 - MacBook FMI On/Off Check",
+          "name": "152 - Purchase Date Check",
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "247", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "152"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.20 — MacBook FMI activation lock (use serial number, not IMEI)."
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.03 • flags: apple\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "165 - Purchase Country Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "165"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.05 • flags: apple\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "167 - Refurbished Status",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "167"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.03 • flags: apple\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "171 - Replacement Status (Active Device)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "171"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.02 • flags: apple\n\nReturns structured `object`."
           }
         },
         {
@@ -185,13 +304,204 @@
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "206", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "206"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$2.80 — full Apple GSX report. Expensive — use intentionally."
+            "url": "{{baseUrl}}",
+            "description": "Apple • $2.80 • flags: apple, new\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "247 - MacBook FMI On/Off Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "247"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.20 • flags: apple, mac, fmi-locked\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "249 - MacBook iCloud Clean/Lost Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "249"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.30 • flags: apple, mac, blacklist\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "274 - Model/Product Description",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "274"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.03 • flags: apple\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "275 - Apple IMEI/Serial Validator",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "275"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.005 • flags: apple\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "290 - iCloud Clean/Lost Status (WiFi Only)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "290"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.06 • flags: apple, blacklist\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "309 - MDM On/Off Status S2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "309"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $0.45 • flags: apple\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "320 - Sold By Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "320"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Apple • $2.39 • flags: apple, new\n\nReturns structured `object`."
           }
         }
       ]
@@ -200,71 +510,55 @@
       "name": "US Carriers",
       "item": [
         {
-          "name": "272 - AT&T Status Check",
+          "name": "13 - US - OLD - Verizon Clean/Lost Check",
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "272", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "13"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.05 — AT&T device + finance status. Response includes `att/deviceStatus` and `att/financeStatus` in a single call."
+            "url": "{{baseUrl}}",
+            "description": "US Carriers • $0.05 • flags: us\n\nReturns only `response` (no JSON object)."
           }
         },
         {
-          "name": "273 - T-Mobile Pro Check",
+          "name": "145 - US - OLD - T-Mobile Pro Check",
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "273", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "145"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.05 — T-Mobile device + finance status."
-          }
-        },
-        {
-          "name": "284 - Verizon Finance Check",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                { "key": "service", "value": "284", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
-              ]
-            },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.04 — Verizon device + finance status. Watch for `PAST DUE` on financeStatus."
-          }
-        },
-        {
-          "name": "251 - TracFone / StraightTalk Status",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                { "key": "service", "value": "251", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
-              ]
-            },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.10 — TracFone / StraightTalk status."
+            "url": "{{baseUrl}}",
+            "description": "US Carriers • $0.06 • flags: us\n\nReturns structured `object`."
           }
         },
         {
@@ -275,13 +569,126 @@
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "211", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "211"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.06 — USA blacklist / barred device check."
+            "url": "{{baseUrl}}",
+            "description": "US Carriers • $0.06 • flags: us, blacklist\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "251 - US - TracFone / StraightTalk Status Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "251"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "US Carriers • $0.10 • flags: us\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "272 - US - NEW - AT&T Status Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "272"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "US Carriers • $0.05 • flags: us\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "273 - US - NEW - T-Mobile Pro Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "273"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "US Carriers • $0.05 • flags: us\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "284 - US - NEW - Verizon Finance Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "284"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "US Carriers • $0.04 • flags: us\n\nReturns structured `object`."
           }
         },
         {
@@ -292,13 +699,22 @@
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "287", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "287"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.10 — generic USA ESN status (not carrier-specific)."
+            "url": "{{baseUrl}}",
+            "description": "US Carriers • $0.10 • flags: us\n\nReturns structured `object`."
           }
         }
       ]
@@ -307,54 +723,1276 @@
       "name": "JP Carriers",
       "item": [
         {
-          "name": "195 - JP NTT Docomo Status Check",
+          "name": "195 - JP - NTT Docomo Status Check",
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "195", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "195"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.03 — Japan NTT Docomo carrier status."
+            "url": "{{baseUrl}}",
+            "description": "JP Carriers • $0.03 • flags: jp\n\nReturns structured `object`."
           }
         },
         {
-          "name": "236 - JP SoftBank Finance Check",
+          "name": "236 - JP - SoftBank Finance Check",
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "236", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "236"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.03 — Japan SoftBank finance status."
+            "url": "{{baseUrl}}",
+            "description": "JP Carriers • $0.03 • flags: jp\n\nReturns structured `object`."
           }
         },
         {
-          "name": "237 - JP KDDI Finance Check",
+          "name": "237 - JP - KDDI Finance Check",
           "request": {
             "method": "POST",
             "header": [],
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
-                { "key": "service", "value": "237", "type": "text" },
-                { "key": "imei", "value": "{{imei}}", "type": "text" },
-                { "key": "key", "value": "{{apiKey}}", "type": "text" }
+                {
+                  "key": "service",
+                  "value": "237"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
               ]
             },
-            "url": { "raw": "{{baseUrl}}", "host": ["{{baseUrl}}"] },
-            "description": "$0.03 — Japan KDDI finance status."
+            "url": "{{baseUrl}}",
+            "description": "JP Carriers • $0.03 • flags: jp\n\nReturns structured `object`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Brand Info",
+      "item": [
+        {
+          "name": "11 - Samsung Info S1",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "11"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.12\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "158 - Huawei Info S1",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "158"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.10\n\nReturns only `response` (no JSON object)."
+          }
+        },
+        {
+          "name": "160 - LG Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "160"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.10\n\nReturns only `response` (no JSON object)."
+          }
+        },
+        {
+          "name": "190 - Samsung Info S2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "190"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.06\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "196 - Xiaomi Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "196"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.05\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "209 - Google Pixel Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "209"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.12\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "233 - OnePlus Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "233"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.06\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "246 - Motorola Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "246"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.08\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "248 - ZTE Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "248"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.05\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "283 - Huawei Info S2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "283"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.07\n\nReturns only `response` (no JSON object)."
+          }
+        },
+        {
+          "name": "289 - FID Pro Check (Apple/Samsung/Google)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "289"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.03\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "302 - Samsung Knox Status",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "302"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.14\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "307 - iTel / Tecno / Infinix Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "307"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.02\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "317 - OPPO Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "317"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.20\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "324 - Honor Info",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "324"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Brand Info • $0.08\n\nReturns structured `object`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "All-in-one",
+      "item": [
+        {
+          "name": "120 - All-in-one (Basic Info)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "120"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "All-in-one • $0.08\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "205 - All-in-one (iFreeCheck Mini)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "205"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "All-in-one • $0.05\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "242 - All-in-one (iFreeCheck Pro)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "242"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "All-in-one • $0.10\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "281 - All-in-one (iFreeCheck Ultimate)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "281"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "All-in-one • $0.55\n\nReturns structured `object`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Generic",
+      "item": [
+        {
+          "name": "0 - [FREE] Universal Model Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "0"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • FREE\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "49 - Convert IMEI / IMEI2 / Serial",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "49"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.02\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "55 - Blacklist Status",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "55"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.02 • flags: blacklist\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "56 - Model + Brand + Manufacturer (by IMEI)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "56"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.01\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "81 - Model + Color + Storage",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "81"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.02\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "140 - Warranty Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "140"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.02 • flags: tool\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "225 - Model + Color + Storage + FMI",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "225"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.03\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "229 - Part Number / MPN",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "229"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.10\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "241 - SIM-Lock Status",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "241"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.03\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "243 - Carrier + SIM-Lock S1",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "243"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.08 • flags: blacklist, tool\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "252 - Carrier + SIM-Lock S2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "252"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.08 • flags: fmi-locked, tool\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "253 - Carrier + SIM-Lock S3",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "253"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.07 • flags: blacklist\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "255 - Carrier + SIM-Lock Only",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "255"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.06\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "286 - Warranty Check Pro",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "286"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.02 • flags: tool\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "319 - Model + eSIM + pSIM Compatibility",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "319"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.01\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "321 - Config Code Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "321"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Generic • $0.02\n\nReturns structured `object`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Laptop",
+      "item": [
+        {
+          "name": "308 - MacBook Specifications (No CTO)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "308"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Laptop • $0.20 • flags: mac\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "313 - Lenovo Laptop Model Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "313"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Laptop • $0.02\n\nReturns only `response` (no JSON object)."
+          }
+        },
+        {
+          "name": "314 - Dell Laptop Model Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "314"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Laptop • $0.02\n\nReturns only `response` (no JSON object)."
+          }
+        },
+        {
+          "name": "315 - HP Laptop Model Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "315"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Laptop • $0.02\n\nReturns only `response` (no JSON object)."
+          }
+        },
+        {
+          "name": "316 - MacBook Specifications + FMI + MDM",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "316"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Laptop • $0.70 • flags: mac\n\nReturns structured `object`."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dev/Testing",
+      "item": [
+        {
+          "name": "125 - FMI On/Off [Dev-Exclusive]",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "125"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Dev/Testing • $0.01 • flags: dev\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "238 - Free Check Sample [Dev-Exclusive]",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "238"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Dev/Testing • $0.01 • flags: dev\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "318 - TESTING - Serial Decoder",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "318"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Dev/Testing • $1.00 • flags: tool\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "322 - TESTING - Fraud Check",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "322"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Dev/Testing • $1.00 • flags: tool\n\nReturns structured `object`."
+          }
+        },
+        {
+          "name": "323 - TESTING - Model",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "service",
+                  "value": "323"
+                },
+                {
+                  "key": "imei",
+                  "value": "{{imei}}"
+                },
+                {
+                  "key": "key",
+                  "value": "{{apiKey}}"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}",
+            "description": "Dev/Testing • $1.00 • flags: tool\n\nReturns structured `object`."
           }
         }
       ]
