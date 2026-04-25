@@ -40,6 +40,18 @@ describe('parseErrorMessage', () => {
     expect(parseErrorMessage('Error 10234: bad key')).toBe('INVALID_KEY');
   });
 
+  it('maps "Invalid IMEI/Serial Number" → INVALID_IMEI (real-world response)', () => {
+    expect(parseErrorMessage('Invalid IMEI/Serial Number')).toBe('INVALID_IMEI');
+  });
+
+  it('maps a bare "Invalid IMEI" → INVALID_IMEI', () => {
+    expect(parseErrorMessage('Invalid IMEI')).toBe('INVALID_IMEI');
+  });
+
+  it('maps "Invalid Serial Number" → INVALID_IMEI', () => {
+    expect(parseErrorMessage('Invalid Serial Number')).toBe('INVALID_IMEI');
+  });
+
   it('falls through to UNKNOWN for unrecognized messages', () => {
     expect(parseErrorMessage('Some new error we have not seen')).toBe('UNKNOWN');
   });

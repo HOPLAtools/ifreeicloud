@@ -11,11 +11,14 @@ const ERROR_PATTERNS: Array<{ code: IFreeiCloudErrorCode; pattern: RegExp }> = [
   { code: 'INSUFFICIENT_BALANCE', pattern: /insufficient\s*balance/i },
   // The legacy integration treats numeric code 10234 as "API key inválida".
   { code: 'INVALID_KEY', pattern: /invalid\s*api\s*key|invalid\s*key|\b10234\b/i },
+  // Observed against live API when an IMEI/SN doesn't validate (Luhn or DB lookup).
+  { code: 'INVALID_IMEI', pattern: /invalid\s*imei(\/serial(\s*number)?)?|invalid\s*serial(\s*number)?/i },
 ];
 
 const ERROR_DESCRIPTIONS: Record<IFreeiCloudErrorCode, string> = {
   INSUFFICIENT_BALANCE: 'Account balance is too low to run this service',
   INVALID_KEY: 'API key is missing, malformed, or rejected by the server',
+  INVALID_IMEI: 'IMEI / Serial Number rejected by iFreeiCloud (failed validation)',
   UNKNOWN: 'iFreeiCloud returned an error',
 };
 

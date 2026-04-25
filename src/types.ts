@@ -37,13 +37,25 @@ export interface IFreeiCloudCheckResponse<TObject = unknown> {
 
 /**
  * Service entry as returned by the live `accountinfo=servicelist` endpoint.
- * The exact shape on the wire is defined by iFreeiCloud and may grow new fields over time.
+ *
+ * Fields below were observed against the live API on 2026-04-25. The interface stays open via
+ * `[extra: string]: unknown` so new fields don't break consumers.
+ *
+ * Note: `name` may contain HTML entities (e.g. `&#128274;` for 🔒). Decode at render-time if
+ * you display these in a UI.
  */
 export interface IFreeiCloudService {
   service: number | string;
   name: string;
   price: number | string;
-  /** Some endpoints expose `processing_time` and a serial-support flag — preserved as-is. */
+  /** Processing time string, e.g. `"Instant"` or `"1-3 days"`. */
+  time?: string;
+  /** Human-readable description of what the service checks. */
+  description?: string;
+  /** Whether the service accepts a serial number in addition to an IMEI. */
+  snSupport?: boolean;
+  /** Whether the response includes a structured `object` (mirror of the local `jsonSupport`). */
+  objectSupport?: boolean;
   [extra: string]: unknown;
 }
 
@@ -51,12 +63,13 @@ export interface IFreeiCloudService {
  * Best-effort error code derived from the `error` string returned by the API.
  *
  * iFreeiCloud does not publish a stable error-code taxonomy, so we map only the patterns we have
- * observed in production (`INSUFFICIENT_BALANCE`, `INVALID_KEY`). Anything else falls through to
- * `UNKNOWN`. The original message is always available on `IFreeiCloudError.rawMessage`.
+ * observed in the wild. Anything else falls through to `UNKNOWN`. The original message is always
+ * available on `IFreeiCloudError.rawMessage`.
  */
 export type IFreeiCloudErrorCode =
   | 'INSUFFICIENT_BALANCE'
   | 'INVALID_KEY'
+  | 'INVALID_IMEI'
   | 'UNKNOWN';
 
 /**

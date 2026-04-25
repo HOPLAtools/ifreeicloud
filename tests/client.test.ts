@@ -175,7 +175,7 @@ describe('createIFreeiCloudClient', () => {
   });
 
   describe('services()', () => {
-    it('returns object as the service list', async () => {
+    it('returns object as the service list when it is an array', async () => {
       globalThis.fetch = mockFetch({
         success: true,
         response: '<table>...</table>',
@@ -191,6 +191,27 @@ describe('createIFreeiCloudClient', () => {
       expect(Array.isArray(result)).toBe(true);
       expect(result).toHaveLength(2);
       expect(result[0]!.name).toBe('USA ESN Status');
+    });
+
+    it('normalizes object shape (keyed by ID) to an array', async () => {
+      // Real-world shape observed against the live API.
+      globalThis.fetch = mockFetch({
+        success: true,
+        response: '<table>...</table>',
+        object: {
+          '0': { service: 0, name: '[FREE] Universal Model Check', price: 0 },
+          '287': { service: 287, name: 'USA ESN Status', price: 0.1 },
+        },
+      });
+
+      const client = createIFreeiCloudClient({ apiKey: TEST_KEY });
+      const result = await client.services();
+
+      expect(Array.isArray(result)).toBe(true);
+      expect(result).toHaveLength(2);
+      const ids = result.map((s) => Number(s.service));
+      expect(ids).toContain(0);
+      expect(ids).toContain(287);
     });
 
     it('returns [] when object is missing', async () => {

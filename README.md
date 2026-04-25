@@ -178,17 +178,18 @@ try {
   await client.check(imei, serviceId);
 } catch (err) {
   if (err instanceof IFreeiCloudError) {
-    err.code;        // 'INSUFFICIENT_BALANCE' | 'INVALID_KEY' | 'UNKNOWN'
+    err.code;        // 'INSUFFICIENT_BALANCE' | 'INVALID_KEY' | 'INVALID_IMEI' | 'UNKNOWN'
     err.rawMessage;  // The original string from the API
   }
 }
 ```
 
-| Code                   | Triggered by (case-insensitive)             |
-|------------------------|---------------------------------------------|
-| `INSUFFICIENT_BALANCE` | Message contains `insufficient balance`     |
+| Code                   | Triggered by (case-insensitive)              |
+|------------------------|----------------------------------------------|
+| `INSUFFICIENT_BALANCE` | Message contains `insufficient balance`      |
 | `INVALID_KEY`          | `invalid api key`, `invalid key`, or `10234` |
-| `UNKNOWN`              | Anything else                               |
+| `INVALID_IMEI`         | `invalid imei`, `invalid serial number`, etc. |
+| `UNKNOWN`              | Anything else                                |
 
 When you hit an `UNKNOWN` repeatedly in production, open a PR to `errors.ts` to promote the pattern.
 

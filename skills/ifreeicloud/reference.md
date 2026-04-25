@@ -50,7 +50,11 @@ type ServiceFlag =
   | 'apple' | 'mac' | 'us' | 'jp'
   | 'fmi-locked' | 'blacklist' | 'tool' | 'dev' | 'new';
 
-type IFreeiCloudErrorCode = 'INSUFFICIENT_BALANCE' | 'INVALID_KEY' | 'UNKNOWN';
+type IFreeiCloudErrorCode =
+  | 'INSUFFICIENT_BALANCE'
+  | 'INVALID_KEY'
+  | 'INVALID_IMEI'
+  | 'UNKNOWN';
 ```
 
 ## IFreeiCloudClient Interface
@@ -124,6 +128,7 @@ function useIFreeiCloudBalance(
 |------------------------|----------------------------------------------|
 | `INSUFFICIENT_BALANCE` | `insufficient balance`                        |
 | `INVALID_KEY`          | `invalid api key`, `invalid key`, or `10234`  |
+| `INVALID_IMEI`         | `invalid imei`, `invalid serial number`, etc. |
 | `UNKNOWN`              | Anything else (the raw message is preserved) |
 
 ## Validators

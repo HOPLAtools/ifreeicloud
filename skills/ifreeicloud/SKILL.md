@@ -224,7 +224,7 @@ try {
   const result = await client.check(imei, serviceId);
 } catch (err) {
   if (err instanceof IFreeiCloudError) {
-    // err.code: 'INSUFFICIENT_BALANCE' | 'INVALID_KEY' | 'UNKNOWN'
+    // err.code: 'INSUFFICIENT_BALANCE' | 'INVALID_KEY' | 'INVALID_IMEI' | 'UNKNOWN'
     // err.rawMessage: original API error string (verbatim)
     // err.message: '[INSUFFICIENT_BALANCE] Account balance is too low...: <raw>'
   }
@@ -235,6 +235,7 @@ try {
 |------------------------|----------------------------------------------|
 | `INSUFFICIENT_BALANCE` | `insufficient balance`                        |
 | `INVALID_KEY`          | `invalid api key`, `invalid key`, or `10234`  |
+| `INVALID_IMEI`         | `invalid imei`, `invalid serial number`, etc. |
 | `UNKNOWN`              | Anything else                                 |
 
 When you start seeing the same `UNKNOWN` message repeatedly in production, promote it: open a PR adding the regex to `parseErrorMessage` in `src/errors.ts`.

@@ -100,11 +100,19 @@ export function createIFreeiCloudClient(
   }
 
   async function services(): Promise<IFreeiCloudService[]> {
-    const envelope = await postForm<IFreeiCloudEnvelope<IFreeiCloudService[]>>({
+    // iFreeiCloud may return `object` either as an array of services OR as a plain object
+    // keyed by service ID (`{ "0": {...}, "287": {...} }`). Both have been observed in the
+    // wild — normalize to an array.
+    const envelope = await postForm<
+      IFreeiCloudEnvelope<IFreeiCloudService[] | Record<string, IFreeiCloudService>>
+    >({
       accountinfo: 'servicelist',
     });
     const unwrapped = unwrap(envelope);
-    return unwrapped.object ?? [];
+    const obj = unwrapped.object;
+    if (obj == null) return [];
+    if (Array.isArray(obj)) return obj;
+    return Object.values(obj);
   }
 
   async function balance(): Promise<number> {

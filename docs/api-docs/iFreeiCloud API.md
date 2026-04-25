@@ -159,6 +159,7 @@ The client maps the patterns we've seen to typed codes and preserves the raw mes
 |------------------------|----------------------------------------------|
 | `INSUFFICIENT_BALANCE` | `insufficient balance`                        |
 | `INVALID_KEY`          | `invalid api key`, `invalid key`, or `10234`  |
+| `INVALID_IMEI`         | `invalid imei`, `invalid serial number`, etc. |
 | `UNKNOWN`              | Anything else                                 |
 
 ```typescript
